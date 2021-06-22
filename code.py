@@ -9,6 +9,7 @@ from sklearn.metrics import cohen_kappa_score
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def minmax(dataset):
         minmax = list()
@@ -277,6 +278,37 @@ def back_propagation(train, test, l_rate, n_epoch, n_hidden, K):
                 prediction = predict(network, row,K)
                 predictions_test.append(prediction)
         return(predictions_train,predictions_test,epoch_error)
+
+
+# Working on Banknote dataset
+print("Working on Banknote dataset...")
+# reading data
+banknote_dataset = pd.read_csv('data-banknote-authentication.csv',skiprows=[1,2])
+dataset = banknote_dataset.values.tolist()
+
+for i in range(len(dataset[0])-1):
+        column_to_float(dataset, i)
+# convert class column to integers
+column_to_int(dataset, len(dataset[0])-1)
+# normalize input variables
+mm = minmax(dataset)
+normalize(dataset, mm)
+# evaluate algorithm
+n_folds = 5
+l_rate = 0.01
+mu=0.001
+n_epoch = 10
+n_hidden = 20
+K = [random()*1e-6 for i in range(2)]
+# printing initial K
+print("Initial K:",K)
+# run algorithm
+scores = run_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden,K)
+
+print("Final K:",K)
+
+print('Scores: %s' % scores)
+print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
       
 # Loading Data Set
 # Iris Data Set
@@ -299,10 +331,13 @@ l_rate = 0.01
 mu=0.001
 n_epoch = 10
 n_hidden = 20
-K = [random() for i in range(2)]
-
-#scores = run_algorithm([row[:-1]+[int(row[-1])] for row in temp], back_propagation, n_folds, l_rate, n_epoch, n_hidden,K)
+K = [random()*1e-6 for i in range(2)]
+# printing initial K
+print("Initial K:",K)
+# run algorithm
 scores = run_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden,K)
+
+print("Final K:",K)
 
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
