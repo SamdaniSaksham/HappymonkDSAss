@@ -342,3 +342,34 @@ print("Final K:",K)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
+# MNIST Dataset
+from keras.datasets import mnist
+print("Working on MNIST dataset...")
+# reading data
+(train_X, train_y), (test_X, test_y) = mnist.load_data()
+X = np.vstack([train_X,test_X])
+y = np.vstack([train_y.reshape((-1,1)),test_y.reshape((-1,1))])
+dataset = np.hstack([X.reshape(70000,-1),y]).tolist()
+
+for i in range(len(dataset[0])-1):
+        column_to_float(dataset, i)
+# convert class column to integers
+column_to_int(dataset, len(dataset[0])-1)
+# normalize input variables
+mm = minmax(dataset)
+normalize(dataset, mm)
+# evaluate algorithm
+n_folds = 2
+l_rate = 0.01
+mu=0.001
+n_epoch = 10
+n_hidden = 20
+K = [random()*1e-6 for i in range(2)]
+# printing initial K
+print("Initial K:",K)
+# run algorithm
+scores = run_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden,K)
+
+print("Final K:",K)
+print('Scores: %s' % scores)
+print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
